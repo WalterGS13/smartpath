@@ -1,0 +1,21 @@
+{% extends "escuela/layout.html"%}
+
+
+{% block body %}
+
+<h1>Maestro: {{maestro.id_usuario}}</h1>
+<h2>Asistencia</h2>
+
+<div class="container" style="border: 2px solid black; margin: 5px; ">
+    <form>
+        {% for alumno in alumnos %}
+            <div style="border: 2px solid black; margin: 10px;">
+                <button>{{alumno.id_usuario}}</button>
+            </div>
+        {% endfor %}
+    </form>
+</div>
+
+
+
+{% endblock %}

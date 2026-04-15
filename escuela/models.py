@@ -4,14 +4,20 @@ class roles(models.Model):
     nombre_rol = models.CharField(max_length=64)
     descripcion = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.nombre_rol}"
+
 class usuarios(models.Model):
-    id_usuario = models.IntegerField(auto_created=True, primary_key=True)
+    id_usuario = models.IntegerField(primary_key=True, auto_created=True)
     nombre_completo = models.CharField(max_length=100)
     email = models.EmailField()
     contrasena = models.CharField(max_length=128)
     rol = models.ForeignKey(roles, on_delete=models.CASCADE, related_name="rol")
     activo = models.BooleanField()
-    created_at = models.DateField(auto_created=True)
+    created_at = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return self.nombre_completo
     
 
 class padres_tutores(models.Model):
