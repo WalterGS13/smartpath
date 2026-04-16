@@ -8,7 +8,6 @@ class roles(models.Model):
         return f"{self.nombre_rol}"
 
 class usuarios(models.Model):
-    id_usuario = models.IntegerField(primary_key=True, auto_created=True)
     nombre_completo = models.CharField(max_length=100)
     email = models.EmailField()
     contrasena = models.CharField(max_length=128)
@@ -27,14 +26,20 @@ class padres_tutores(models.Model):
 class maestros(models.Model):
     id_usuario = models.ForeignKey(usuarios, on_delete=models.CASCADE, related_name="usuario_maestro")
     especialidad = models.CharField(max_length=100)
-
+    def __str__(self):
+        return self.id_usuario.nombre_completo
+    
 class grado(models.Model):
     grade = models.CharField(max_length=64)
     seccion = models.CharField(max_length=5)
+    def __str__(self):
+        return self.grade
 
 class alumnos(models.Model):
     id_usuario = models.ForeignKey(usuarios, on_delete=models.CASCADE, related_name="usuario_alumno")
     grado_seccion = models.ForeignKey(grado, on_delete=models.CASCADE, related_name="grado")
+    def __str__(self):
+        return self.id_usuario.nombre_completo
 
 class logs_auditoria(models.Model):
     id_usuario = models.ForeignKey(usuarios, on_delete=models.CASCADE, related_name="logs")
@@ -50,6 +55,9 @@ class relacion_familia(models.Model):
 class cursos(models.Model):
     nombre_curso = models.CharField(max_length=100)
     id_maestro = models.ForeignKey(maestros, on_delete=models.CASCADE, related_name="curso_maestro")
+    curso_grado = models.ForeignKey(grado, on_delete=models.CASCADE, related_name="curso_grado")
+    def __str__(self):
+        return self.nombre_curso
 
 class pagos(models.Model):
     id_padre = models.ForeignKey(padres_tutores,  on_delete=models.CASCADE, related_name="pago_padre")

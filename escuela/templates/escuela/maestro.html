@@ -3,17 +3,20 @@
 
 {% block body %}
 
-<h1>Maestro: {{maestro.id_usuario}}</h1>
-<h2>Asistencia</h2>
+<h1>Docente: {{Curso.id_maestro}}</h1>
+<h2>Asistencia:</h2>
 
 <div class="container" style="border: 2px solid black; margin: 5px; ">
-    <form>
-        {% for alumno in alumnos %}
-            <div style="border: 2px solid black; margin: 10px;">
+    {% for alumno in alumnos %}
+        <div style="border: 2px solid black; margin: 10px;">
+            <form action = "{% url 'maestro'%}" method="post">
+                {% csrf_token %}
+                <input hidden name= "q" value="{{alumno.id_usuario}}">  
                 <button>{{alumno.id_usuario}}</button>
-            </div>
-        {% endfor %}
-    </form>
+                    
+            </form>
+        </div>
+    {% endfor %}
 </div>
 
 
