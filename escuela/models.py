@@ -57,7 +57,16 @@ class cursos(models.Model):
     id_maestro = models.ForeignKey(maestros, on_delete=models.CASCADE, related_name="curso_maestro")
     curso_grado = models.ForeignKey(grado, on_delete=models.CASCADE, related_name="curso_grado")
     def __str__(self):
-        return self.nombre_curso
+        return self.nombre_curso + " " + self.id_maestro.id_usuario.nombre_completo
+    
+class curso_asignado(models.Model):
+    id_alumno = models.ForeignKey(alumnos,  on_delete=models.CASCADE, related_name="curso_alumno")
+    id_curso = models.ForeignKey(cursos, on_delete=models.CASCADE, related_name="curso")
+
+    def __str__(self):
+        return self.id_alumno.id_usuario.nombre_completo +" de " + self.id_alumno.grado_seccion.grade + " en " + self.id_curso.nombre_curso
+    
+
 
 class pagos(models.Model):
     id_padre = models.ForeignKey(padres_tutores,  on_delete=models.CASCADE, related_name="pago_padre")
@@ -76,6 +85,9 @@ class asistencia(models.Model):
     id_alumno = models.ForeignKey(alumnos,  on_delete=models.CASCADE, related_name="asistencia_alumnos")
     fecha = models.DateField(auto_now=True)
     estado = models.BooleanField()
+    def __str__(self):
+        att = "Presente" if self.estado == True else "Ausente"
+        return f"Alumno {self.id_alumno.id_usuario.nombre_completo} estuvo {att} el dia {self.fecha}"
 
 class calificaciones(models.Model):
     id_alumno = models.ForeignKey(alumnos,  on_delete=models.CASCADE, related_name="calificacion_alumnos")

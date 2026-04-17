@@ -20,5 +20,5 @@ from escuela import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),   
-    path('maestro/', include("escuela.urls"))
+    path('smartpath/', include("escuela.urls"))
 ]

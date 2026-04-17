@@ -3,16 +3,26 @@
 
 {% block body %}
 
-<h1>Docente: {{Curso.id_maestro}}</h1>
+{% for link in links %}
+    <a href="{% url 'maestro_asistencia' link.nombre_curso %}">{{link.nombre_curso}}</a>
+
+{% endfor %}
+
+
+
+<h1>Docente: {{Curso.id_maestro}}  </h1>
+<h1>Curso: {{Curso.nombre_curso}}</h1>
+<h1>Grado: {{Curso.curso_grado}}</h1>
+
 <h2>Asistencia:</h2>
 
 <div class="container" style="border: 2px solid black; margin: 5px; ">
     {% for alumno in alumnos %}
         <div style="border: 2px solid black; margin: 10px;">
-            <form action = "{% url 'maestro'%}" method="post">
+            <form action = "{% url 'maestro_asistencia' '{{Curso.nombre_curso}}'%}" method="post">
                 {% csrf_token %}
-                <input hidden name= "q" value="{{alumno.id_usuario}}">  
-                <button>{{alumno.id_usuario}}</button>
+                <input hidden name= "q" value="{{alumno.id_alumno.id_usuario}}">  
+                <button>{{alumno.id_alumno.id_usuario}}</button>
                     
             </form>
         </div>
