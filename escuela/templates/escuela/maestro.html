@@ -19,7 +19,7 @@
 <div class="container" style="border: 2px solid black; margin: 5px; ">
     {% for alumno in alumnos %}
         <div style="border: 2px solid black; margin: 10px;">
-            <form action = "{% url 'maestro_asistencia' '{{Curso.nombre_curso}}'%}" method="post">
+            <form action = "{% url 'maestro_asistencia' Curso.nombre_curso %}" method="post">
                 {% csrf_token %}
                 <input hidden name= "q" value="{{alumno.id_alumno.id_usuario}}">  
                 <button>{{alumno.id_alumno.id_usuario}}</button>

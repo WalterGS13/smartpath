@@ -1,0 +1,24 @@
+{% extends "escuela/layout.html" %}
+
+{% block body %}
+
+<h1>Ingrese fecha para buscar asistencias</h1>
+<form action="{% url 'asistencia' %}" method="post">
+    {% csrf_token %}
+    <input type="date" name="date">
+    <select name="curso">
+        {% for curso in cursos %}
+            <option>{{curso.nombre_curso}}</option>
+        {% endfor %}
+    </select>
+    <button>Buscar</button>
+</form>
+{% if method == "post" %}
+    {% for asistencia in asistencias %}
+        <ul>
+            <li>{{asistencia}}</li>
+        </ul>
+    {%endfor%}
+{% endif %}
+
+{% endblock %}

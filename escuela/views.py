@@ -37,9 +37,22 @@ def maestro_asistencia(request, n_curso):
 
         cambio_asistencia.save()
        
-        
-        
-
+    
     return render(request, "escuela/maestro.html", {"Curso": curso, "alumnos": students, "links": cursos.objects.filter(
         id_maestro = maestros.objects.filter(id_usuario
          = usuarios.objects.filter(nombre_completo ="Andy Giancarlo Choreque Gomez")[0])[0])})
+
+def asistencia_reporte(request):
+    #cargando cursos 
+    curso = cursos.objects.filter(id_maestro = maestros.objects.filter(id_usuario
+    = usuarios.objects.filter(nombre_completo ="Andy Giancarlo Choreque Gomez")[0])[0])
+
+    if request.method == "POST":
+         attendance = asistencia.objects.filter(id_maestro = curso[0].id_maestro, fecha = request.POST.get('date'))
+         return render(request, "escuela/asistencia.html",{"cursos" : curso, "method": "post", "asistencias": attendance})
+
+
+
+
+
+    return render(request, "escuela/asistencia.html",{"cursos" : curso, "method": "get", "asistencias": ""})
