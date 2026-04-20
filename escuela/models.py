@@ -83,11 +83,15 @@ class agenda_tareas(models.Model):
 class asistencia(models.Model):
     id_maestro = models.ForeignKey(maestros, on_delete=models.CASCADE, related_name="asistencia_maestro")
     id_alumno = models.ForeignKey(alumnos,  on_delete=models.CASCADE, related_name="asistencia_alumnos")
-    fecha = models.DateField(auto_now=True)
+    grado_seccion = models.ForeignKey(grado, on_delete=models.CASCADE, related_name="asistencia_grado")
+    id_curso = models.ForeignKey(cursos, on_delete=models.CASCADE, related_name="asistencia_curso")
+    fecha = models.DateField()
+    excepcion = models.CharField(max_length=64)
     estado = models.BooleanField()
     def __str__(self):
         att = "Presente" if self.estado == True else "Ausente"
-        return f"Alumno {self.id_alumno.id_usuario.nombre_completo} estuvo {att} el dia {self.fecha}"
+        ex = f"Motivo: {self.excepcion}" if self.excepcion != None else ""
+        return f"Alumno {self.id_alumno.id_usuario.nombre_completo} estuvo {att} el dia {self.fecha} {ex}"
 
 class calificaciones(models.Model):
     id_alumno = models.ForeignKey(alumnos,  on_delete=models.CASCADE, related_name="calificacion_alumnos")

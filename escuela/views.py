@@ -22,8 +22,8 @@ def maestro_asistencia(request, n_curso):
 
     #agregando automaticamente asistencia para cada alumno
     for student in students:
-        if not asistencia.objects.filter(fecha = datetime.now(), id_alumno = student.id_alumno):
-            attendance = asistencia(id_maestro = curso.id_maestro, id_alumno = student.id_alumno, estado = True)
+        if not asistencia.objects.filter(fecha = datetime.now(), id_alumno = student.id_alumno, id_curso = student.id_curso):
+            attendance = asistencia(id_maestro = curso.id_maestro, id_alumno = student.id_alumno, estado = True, grado_seccion = student.id_alumno.grado_seccion, id_curso = student.id_curso, fecha = datetime.now())
             attendance.save()
 
     if request.method == "POST":
@@ -47,12 +47,31 @@ def asistencia_reporte(request):
     curso = cursos.objects.filter(id_maestro = maestros.objects.filter(id_usuario
     = usuarios.objects.filter(nombre_completo ="Andy Giancarlo Choreque Gomez")[0])[0])
 
+
     if request.method == "POST":
-         attendance = asistencia.objects.filter(id_maestro = curso[0].id_maestro, fecha = request.POST.get('date'))
-         return render(request, "escuela/asistencia.html",{"cursos" : curso, "method": "post", "asistencias": attendance})
-
-
-
-
-
+        curso_post = cursos.objects.filter(id_maestro = maestros.objects.filter(id_usuario
+            = usuarios.objects.filter(nombre_completo ="Andy Giancarlo Choreque Gomez")[0])[0])[0]
+        
+    
+        attendance = asistencia.objects.filter(id_maestro = curso_post.id_maestro, fecha = request.POST.get('date'), id_curso = cursos.objects.filter(nombre_curso = request.POST.get('curso'))[0])
+      
+        return render(request, "escuela/asistencia.html",{"cursos" : curso, "method": "post", "asistencias": attendance})
+            
+            
     return render(request, "escuela/asistencia.html",{"cursos" : curso, "method": "get", "asistencias": ""})
+
+def asistencia_reporte_excepcion(request):
+    if request.method == "POST":
+        curso_excepcion = cursos.objects.filter(id_maestro = maestros.objects.filter(id_usuario
+            = usuarios.objects.filter(nombre_completo ="Andy Giancarlo Choreque Gomez")[0])[0])[0]
+        
+    
+        attendance_excusa = asistencia.objects.filter(id_maestro = curso_excepcion.id_maestro, fecha = request.POST.get('fecha'), id_curso = cursos.objects.filter(nombre_curso = request.POST.get('curso_asistencia'))[0], id_alumno =
+                                                    alumnos.objects.filter(id_usuario = usuarios.objects.filter(nombre_completo = request.POST.get("nombre"))[0])[0])[0]
+        
+        attendance_excusa.excepcion = request.POST.get("excusa")
+        attendance_excusa.save()
+    
+    return HttpResponseRedirect(reverse("asistencia"))
+
+

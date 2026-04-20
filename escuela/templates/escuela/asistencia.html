@@ -13,12 +13,22 @@
     </select>
     <button>Buscar</button>
 </form>
+
 {% if method == "post" %}
+    <ul>
     {% for asistencia in asistencias %}
-        <ul>
+        <form action="{% url 'asistencia_reporte_excepcion' %}" method="post">
+            {% csrf_token %}
+        
             <li>{{asistencia}}</li>
-        </ul>
+                <input type="text" name="curso_asistencia" value="{{asistencia.id_curso.nombre_curso}}" hidden>
+                <input name="fecha", value="{{asistencia.fecha| date:'Y-m-d'}}" hidden>
+                <input type="text" name = "nombre" value = "{{asistencia.id_alumno}}" hidden>
+                <input type="text" name="excusa">
+                <button>Actualizar</button>
+        </form>
     {%endfor%}
-{% endif %}
+    </ul>
+{% endif%}
 
 {% endblock %}
