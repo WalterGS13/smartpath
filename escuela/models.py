@@ -48,6 +48,14 @@ class logs_auditoria(models.Model):
     ip_address = models.GenericIPAddressField()
     created_at = models.DateField(auto_now=True)
 
+
+class mensaje(models.Model):
+    sender = models.ForeignKey(usuarios, on_delete=models.CASCADE, related_name="mensaje_sender")
+    receiver = models.ForeignKey(usuarios, on_delete=models.CASCADE, related_name="mensaje_receiver")
+    subject = models.CharField(max_length=50)
+    message = models.CharField()
+    date = models.DateTimeField(auto_now=True)
+
 class relacion_familia(models.Model):
     id_padre = models.ForeignKey(padres_tutores,  on_delete=models.CASCADE, related_name="relacion_padre")
     id_alumno = models.ForeignKey(alumnos,  on_delete=models.CASCADE, related_name="relacion_alumnos")
@@ -57,7 +65,7 @@ class cursos(models.Model):
     id_maestro = models.ForeignKey(maestros, on_delete=models.CASCADE, related_name="curso_maestro")
     curso_grado = models.ForeignKey(grado, on_delete=models.CASCADE, related_name="curso_grado")
     def __str__(self):
-        return self.nombre_curso + " " + self.id_maestro.id_usuario.nombre_completo
+        return f"Curso: {self.nombre_curso} Maestro: {self.id_maestro.id_usuario.nombre_completo} Grado: {self.curso_grado.grade}"
     
 class curso_asignado(models.Model):
     id_alumno = models.ForeignKey(alumnos,  on_delete=models.CASCADE, related_name="curso_alumno")
@@ -76,10 +84,16 @@ class pagos(models.Model):
 
 class agenda_tareas(models.Model):
     id_curso = models.ForeignKey(cursos, on_delete=models.CASCADE, related_name="agenda_curso")
+    grado_seccion = models.ForeignKey(grado, on_delete=models.CASCADE, related_name="agenda_grado")
     titulo = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200)
     fecha_entrega = models.DateField()
+    nota = models.FloatField();
 
+    def __str__(self):
+        return f"Tarea: {self.titulo} Descripcion: {self.descripcion}"
+    
+    
 class asistencia(models.Model):
     id_maestro = models.ForeignKey(maestros, on_delete=models.CASCADE, related_name="asistencia_maestro")
     id_alumno = models.ForeignKey(alumnos,  on_delete=models.CASCADE, related_name="asistencia_alumnos")
@@ -98,4 +112,6 @@ class calificaciones(models.Model):
     id_tarea = models.ForeignKey(agenda_tareas, on_delete=models.CASCADE, related_name="calificacion_tarea")
     nota = models.FloatField()
     trimestre = models.IntegerField()
+    def __str__(self):
+        return f"Alumno: {self.id_alumno.id_usuario.nombre_completo} \n Tarea: {self.id_tarea.titulo}\n nota: {self.nota}"
     

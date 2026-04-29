@@ -5,7 +5,7 @@
 <h1>Ingrese fecha para buscar asistencias</h1>
 <form action="{% url 'asistencia' %}" method="post">
     {% csrf_token %}
-    <input type="date" name="date">
+    <input type="date" name="date" required>
     <select name="curso">
         {% for curso in cursos %}
             <option>{{curso.nombre_curso}}</option>

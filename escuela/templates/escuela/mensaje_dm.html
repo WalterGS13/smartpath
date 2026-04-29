@@ -1,0 +1,30 @@
+{% extends "escuela/layout.html"%}
+
+
+{% block body %}
+
+
+    {% if mensajes %}
+        
+            {% for mensaje in mensajes  %}
+
+                    <div>
+                            <h3>{{mensaje.sender.nombre_completo}}</h3>
+                            <p>Asunto: {{mensaje.subject}} Mensaje: {{mensaje.message}}</p>
+
+                    </div>
+            
+
+            {% endfor %}
+
+            <form action="{% url 'message_dm' receiver %}" method="post">
+                {% csrf_token %}
+                <input type="text" name="asunto" autocomplete="off" autofocus placeholder="Escribe el asunto de tu mensaje">
+                <input type="text" name="message" autocomplete="off" placeholder="Escribe tu mensaje aqui">
+                <button>send</button>
+            </form>
+
+    {% endif %}
+
+
+{% endblock %}

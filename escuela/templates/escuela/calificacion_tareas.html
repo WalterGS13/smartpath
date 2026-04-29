@@ -1,0 +1,52 @@
+{% extends "escuela/layout.html"%}
+
+
+{% block body %}
+<div>
+<h1>Seleccione el curso para desplegar tareas: </h1>
+    <form  action = "{% url 'tarea_calificacion' %}" method="post" >
+        {% csrf_token %}
+        
+        <select name="curso">
+            {% for curso in cursos %}
+                <option value="{{curso.id}}">{{curso}}</option>
+            {% endfor %}
+        </select>
+        <button>Buscar</button>
+    </form>
+</div>
+{% if method == "post" %}
+<div>
+    <form  action = "{% url 'tarea_calificacion_nota' %}" method="post" >
+        {% csrf_token %}
+        <div>
+            Alumno:
+            <select name="alumno">
+                {% for alumno in alumnos %}
+                    <option value="{{alumno.id}}">{{alumno}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            Tarea:
+            <select name="tarea">
+                {% for tarea in tareas %}
+                    <option value="{{tarea.id}}">{{tarea}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>Nota: <input type="number" name="nota" inputmode="decimal" step="any"></div>
+        
+        <div>Trimestre: <input type="number" name = "trimestre" min="1" max="4"></div> 
+        <div><button>Subir nota</button></div>
+        
+    </form>
+</div>
+
+{% endif %}
+
+
+
+
+{% endblock %}

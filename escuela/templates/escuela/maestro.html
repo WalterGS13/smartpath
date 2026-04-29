@@ -29,6 +29,40 @@
     {% endfor %}
 </div>
 
+<h2>Añadir tareas</h2>
+<div>
+    <form action="{% url 'maestro_tarea' %}" method="post">
+        {% csrf_token %}
+        <input type="text" value= "{{Curso.nombre_curso}}" name="nombre_curso" hidden> 
+        <input type="text" value= "{{Curso.curso_grado}}" name="nombre_grado" hidden>
+
+        <div>
+            Titulo:
+            <input type="text" name = "titulo" autocomplete="off">
+        </div>
+        
+        <div>
+            Descripcion:
+            <input type="text" name = "descripcion" autocomplete="off">
+        </div>
+
+        <div>
+            Fecha limite:
+            <input type="date" name = "fecha_limite" required>
+        </div>
+
+        <div>
+            Valor de la actividad:
+            <input type="number" name = "valor" inputmode="decimal" step="any" inputmode="decimal" step="any">
+        </div>
+        <button>Subir tarea</button>
+
+        <h1>Promedio del curso: {{Curso.nombre_curso}} y grado: {{Curso.curso_grado}}</h1>
+        <h2> {{promedio}}</h2>
+
+    </form>
+</div>
+
 
 
 {% endblock %}

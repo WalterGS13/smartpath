@@ -6,6 +6,12 @@
     <title>Smartpath</title>
 </head>
 <body>
+    <div>
+        <a href="{% url 'maestro'  %}">Panel principal</a>
+        <a href="{% url 'asistencia'  %}">asistencia</a>
+        <a href="{% url 'tarea_calificacion'  %}">Calificacion de tareas</a>
+    </div>
+    
     {% block body %}{% endblock %}
 </body>
 </html>

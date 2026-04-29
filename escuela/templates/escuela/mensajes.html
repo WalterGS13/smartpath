@@ -1,0 +1,31 @@
+{% extends "escuela/layout.html"%}
+
+
+{% block body %}
+
+
+{% if method == "get"%}
+
+
+
+    {% if mensajes %}
+        
+            {% for mensaje in mensajes %}
+
+                    <div>
+                        <a href="{% url 'message_dm' mensaje.receiver.nombre_completo  %}">
+                            <h3>{{mensaje.receiver.nombre_completo}}</h3>
+                            <p>Asunto: {{mensaje.subject}} Mensaje: {{mensaje.message}}</p>
+                        </a>
+                    </div>
+            
+
+            {% endfor %}
+
+    {% endif %}
+
+    
+
+{% endif %}
+
+{% endblock %}
