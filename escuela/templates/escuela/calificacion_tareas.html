@@ -19,6 +19,8 @@
 <div>
     <form  action = "{% url 'tarea_calificacion_nota' %}" method="post" >
         {% csrf_token %}
+
+        <input type="text" name= "curso_calificacion" value="{{c}}" >
         <div>
             Alumno:
             <select name="alumno">

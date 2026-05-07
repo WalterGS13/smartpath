@@ -11,4 +11,8 @@ urlpatterns = [
     path('maestro/tarea/calificacion/nota', views.tarea_calificacion_nota , name = "tarea_calificacion_nota"),
     path('mensajes/', views.message, name = "message"),
     path('mensajes/dm/<str:name>', views.message_dm, name = "message_dm"),
+    path('padres_tutores/<str:name_parent>', views.pm_relative_member, name="padres_tutores"),
+    path('alumno/<str:parent>/<str:name>', views.estudiante, name="estudiante"),
+    path('padres_tutores/<str:name>/pago', views.metodo_pago, name="padres_tutores_pago"),
+    
 ]

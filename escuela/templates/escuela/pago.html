@@ -1,0 +1,23 @@
+{% extends "escuela/layout.html"%}
+
+
+{% block body %}
+
+    <div>
+        <h1>{{padre.id_usuario.nombre_completo}}</h1>
+        <h2>monto a pagar: Q {{pago}}</h2>
+    </div>
+    <div>
+        <form action="{% url 'padres_tutores_pago' padre.id_usuario.nombre_completo %}" method="post">
+            {% csrf_token %}
+            <input type="number" name="cc_number" placeholder="Numero de tarjeta" required>
+            <input type="date" name="cc_date" required>
+            <input type="number" name="cvc" placeholder="cvc" required>
+            <button>Pagar</button>
+        </form>
+    </div>
+    
+
+
+
+{% endblock %}

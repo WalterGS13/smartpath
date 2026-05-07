@@ -1,0 +1,42 @@
+{% extends "escuela/layout.html"%}
+
+
+{% block body %}
+
+{% if pm %}
+
+    <h1>Bienvenido : {{pm_name}}</h1>
+    <h2>Esta viendo el desempeño de: {{alumno.id_usuario.nombre_completo}}</h2>
+
+    <div>
+        <a href="">Pago</a>
+    </div>
+
+    {%for p in pm %}
+
+        <a href="{% url 'estudiante' pm_name p.id_alumno.id_usuario.nombre_completo%}">{{p.id_alumno.id_usuario.nombre_completo}}</a>
+
+    {% endfor %}
+
+{% else %}
+    <h1>Bienvenido: {{alumno.id_usuario.nombre_completo}}</h1>
+
+{% endif %}
+
+
+    <h1>Notas:</h1>
+    {% for key, nota in notas.items %}
+        <div>
+            <h2>{{key}}</h2>
+            <h3>{{nota}}/100</h3>
+        </div>
+    {% endfor%}
+
+    <h1>Agenda tareas</h1>
+    <ul>
+        {% for a in agenda %}
+            <li>{{a}}</li>
+        {% endfor%}
+    </ul>
+
+{% endblock %}

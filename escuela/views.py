@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from escuela.models import *
-from datetime import datetime
-from django.http import HttpResponseRedirect
+from datetime import datetime, timedelta
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
+from escuela.utils.credit_card import *
 
 #redireccionando si ninguna clase fue seleccionada
 def maestro(request):
@@ -46,7 +47,7 @@ def maestro_asistencia(request, n_curso):
         for tarea in tareas:
             for c in calificacion:
                 if c.id_tarea == tarea:
-                    promedio = promedio + c.nota
+                    promedio = (promedio + c.nota)/tarea.nota
             promedio = promedio/len(students)
 
 
@@ -109,13 +110,16 @@ def tarea_calificacion(request):
         curso_post = cursos.objects.filter(id = request.POST.get("curso"))[0]
         tarea = agenda_tareas.objects.filter(id_curso = curso_post, grado_seccion = curso_post.curso_grado)
         alumno = curso_asignado.objects.filter(id_curso = curso_post)
-        return render(request, "escuela/calificacion_tareas.html", {"cursos" : curso, "tareas": tarea, "alumnos": alumno, "method":"post"})
+        return render(request, "escuela/calificacion_tareas.html", {"cursos" : curso, "tareas": tarea, "alumnos": alumno, "method":"post", "c": request.POST.get("curso")})
      
     return render(request, "escuela/calificacion_tareas.html", {"cursos" : curso, "method": "get"})
 
 def tarea_calificacion_nota(request):
     if request.method == "POST":
-        calificacion = calificaciones(id_alumno = alumnos.objects.filter(id = request.POST.get("alumno"))[0], id_tarea = agenda_tareas.objects.filter(id = request.POST.get("tarea"))[0], nota = request.POST.get("nota"), trimestre = request.POST.get("trimestre"))
+        calificacion = calificaciones(id_alumno = alumnos.objects.filter(id = request.POST.get("alumno"))[0], 
+                                      id_curso = cursos.objects.filter(id = request.POST.get("curso_calificacion"))[0],
+                                      id_tarea = agenda_tareas.objects.filter(id = request.POST.get("tarea"))[0], 
+                                      nota = request.POST.get("nota"), trimestre = request.POST.get("trimestre"))
         calificacion.save()
     return HttpResponseRedirect(reverse("maestro"))
 
@@ -150,9 +154,105 @@ def message_dm (request, name):
     
     return render(request, "escuela/mensaje_dm.html", {"user": user, "mensajes" : mensajes, "receiver": name})
 
-def parent_student(request):
-    usuario = relacion_familia.objects.filter(id_padre = padres_tutores.objects.filter(
-            id_usuario = usuarios.objects.filter(nombre_completo = "John Smith")))
+
+def pm_relative_member(request, name_parent):
+
+    if name_parent:
+        pm = relacion_familia.objects.filter(id_padre = padres_tutores.objects.filter(
+            id_usuario = usuarios.objects.filter(nombre_completo = name_parent)[0]
+        )[0])[0]
+        return HttpResponseRedirect(reverse("estudiante", args=(name_parent, pm.id_alumno.id_usuario.nombre_completo,)))
+    
+    return HttpResponse("Information not found")
+       
+     
+
+def estudiante(request, parent, name):
+
+    try:
+        pm0 = relacion_familia.objects.filter(id_padre = padres_tutores.objects.filter(
+                id_usuario = usuarios.objects.filter(nombre_completo = parent)[0])[0],
+                id_alumno = alumnos.objects.filter(id_usuario = usuarios.objects.filter(nombre_completo = name)[0])[0])[0]
+        
+        if pm0:
+            pm = relacion_familia.objects.filter(id_padre = padres_tutores.objects.filter(
+                    id_usuario = usuarios.objects.filter(nombre_completo = parent)[0]
+                )[0])
+    except:
+        pm = ""
+    
+    student = alumnos.objects.filter(id_usuario = usuarios.objects.filter(nombre_completo = name)[0])[0]
+    curso = curso_asignado.objects.filter(id_alumno = student)
+    agenda = agenda_tareas.objects.filter(grado_seccion = student.grado_seccion, fecha_entrega__gte = datetime.now())
+
+    grades_separated = {}
+
+    for c in curso:
+        
+        grades_separated[c.id_curso.nombre_curso] = sum(calificaciones.objects.filter(id_alumno = student, id_curso = c.id_curso).values_list("nota", flat=True))
+        
+    return render(request, "escuela/alumno.html", {"alumno": student, "cursos": curso, "agenda": agenda, "notas": grades_separated, "pm" : pm, "pm_name" : parent})
+
+
+def metodo_pago(request, name):
+    padre = padres_tutores.objects.filter(id_usuario = usuarios.objects.filter(nombre_completo = name)[0])[0]
+    record_pago = pagos.objects.filter(id_padre = padre)
+    if request.method == "POST":
+        cc = credit_card(request.POST.get("cc_number"), request.POST.get("cc_date"))
+
+        if(cc.final_evaluation()):
+            if record_pago:
+                for rp in record_pago:
+                    rp.estado = False
+                    rp.save()
+                return HttpResponseRedirect(reverse("padres_tutores_pago", args=(padre.id_usuario.nombre_completo,)))
+        else:
+            return HttpResponse("Metodo de pago no valido")
+
+
+    if not record_pago:
+
+        ahora = datetime.now()
+        futuro = ahora + timedelta(days=30)
+
+        primer_record_pago = pagos(id_padre = padre, monto = 250, fecha_pago = futuro.date(), estado = True)
+        primer_record_pago.save()
+        return render(request, "escuela/pago.html", {"padre": padre, "pago": primer_record_pago.monto})
+    else:
+        monto = 0
+        if record_pago[len(record_pago)-1].estado == True:
+            monto = monto + record_pago[len(record_pago)-1].monto
+        if datetime.now().date() >= record_pago[len(record_pago)-1].fecha_pago:
+            ahora = record_pago[len(record_pago)-1].fecha_pago
+            futuro = ahora + timedelta(days=30)
+
+            
+            r = pagos(id_padre = padre, monto = 250, fecha_pago = futuro, estado = True)
+            r.save()
+
+            nuevo_record_pago = pagos.objects.filter(id_padre = padre)
+
+            for rc in nuevo_record_pago:
+                if rc.estado == True:
+                    monto = monto + rc.monto
+            
+        return render(request, "escuela/pago.html", {"padre": padre, "pago": monto})
+    
+    
+            
+
+        
+    
+
+
+    
+
+
+      
+        
+
+
+
 
 
     

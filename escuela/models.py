@@ -79,8 +79,11 @@ class curso_asignado(models.Model):
 class pagos(models.Model):
     id_padre = models.ForeignKey(padres_tutores,  on_delete=models.CASCADE, related_name="pago_padre")
     monto = models.FloatField()
-    fecha_pago = models.DateField(auto_now=True)
+    fecha_pago = models.DateField()
     estado = models.BooleanField()
+
+    def __str__(self):
+        return f"{self.fecha_pago}"
 
 class agenda_tareas(models.Model):
     id_curso = models.ForeignKey(cursos, on_delete=models.CASCADE, related_name="agenda_curso")
@@ -91,7 +94,7 @@ class agenda_tareas(models.Model):
     nota = models.FloatField();
 
     def __str__(self):
-        return f"Tarea: {self.titulo} Descripcion: {self.descripcion}"
+        return f"Tarea: {self.titulo} Descripcion: {self.descripcion} Valor de la actividad: {self.nota}"
     
     
 class asistencia(models.Model):
@@ -110,6 +113,7 @@ class asistencia(models.Model):
 class calificaciones(models.Model):
     id_alumno = models.ForeignKey(alumnos,  on_delete=models.CASCADE, related_name="calificacion_alumnos")
     id_tarea = models.ForeignKey(agenda_tareas, on_delete=models.CASCADE, related_name="calificacion_tarea")
+    id_curso = models.ForeignKey(cursos, on_delete=models.CASCADE, related_name="calificacion_curso")
     nota = models.FloatField()
     trimestre = models.IntegerField()
     def __str__(self):
