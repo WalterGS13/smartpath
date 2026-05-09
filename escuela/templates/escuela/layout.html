@@ -6,6 +6,7 @@
     <title>Smartpath</title>
 </head>
 <body>
+    {% load static %}
     <div>
         <a href="{% url 'maestro'  %}">Panel principal</a>
         <a href="{% url 'asistencia'  %}">asistencia</a>
@@ -13,5 +14,8 @@
     </div>
     
     {% block body %}{% endblock %}
+    <script src="{% static 'offline.js' %}"></script>
+    <script src="{% static 'sw.js' %}"></script>
 </body>
+
 </html>

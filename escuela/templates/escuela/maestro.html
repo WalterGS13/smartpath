@@ -7,7 +7,7 @@
     <a href="{% url 'maestro_asistencia' link.nombre_curso %}">{{link.nombre_curso}}</a>
 
 {% endfor %}
-
+{% load static %}
 
 
 <h1>Docente: {{Curso.id_maestro}}  </h1>
@@ -63,6 +63,7 @@
     </form>
 </div>
 
-
+<script src="{% static 'offline.js' %}"></script>
+<script src="{% static 'sw.js' %}"></script>
 
 {% endblock %}
