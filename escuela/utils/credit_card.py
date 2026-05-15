@@ -7,7 +7,7 @@ class credit_card():
 
     def credit_card_validator(self):
         #Siguiendo el algoritmo de luhn para verificar las tarjetas
-        if str(self.credit_card_number).isalnum:
+        if not str(self.credit_card_number).isdigit():
             return False
 
         # Invirtiendo la targeta para 
@@ -25,6 +25,8 @@ class credit_card():
 
         for i in range(0,len(reversed_credit_card),2):
             numero_final = numero_final + int(reversed_credit_card[i])
+        
+        
 
         if(numero_final%10 == 0):
             return True
@@ -72,7 +74,6 @@ class credit_card():
         if self.credit_card_validator() and self.expiry_validator() and self.cc_type_validator():
             return True
         return False
-
 
 
 
